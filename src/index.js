@@ -53,7 +53,7 @@ class Game extends React.Component {
       }],
       xIsNext: true,
       stepNumber: 0,
-      moveHistory: Array(9).fill(null)
+      moveHistory: [null]
     }
   }
 
@@ -69,7 +69,7 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{
         squares: squares,
-        moveHistory: moveHistory[history.length - 1] = i
+        moveHistory: moveHistory.push(i)
       }]),
       xIsNext: !this.state.xIsNext,
       stepNumber: history.length
@@ -87,14 +87,27 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+    const moveHistory = this.state.moveHistory;
 
     const moves = history.map((step, move) => {
+
+      // Check whether we are "time traveling"
+      let isSelected; 
+      if (this.state.stepNumber >= moveHistory.length - 1) {
+        // If stepNumber and move history are in sync, we can simply check whether the last and current moves match
+        isSelected = (moveHistory[moveHistory.length - 1] === moveHistory[move] || moveHistory.length < 2) ? 'bold-text' : 'not-selected'; 
+      } else {
+        // If we're not on the last step of our moveHistory, then we've traveled back in time
+        // In this case, we need to compare the current move to the move associated with our step number
+        isSelected = (moveHistory[move] === moveHistory[this.state.stepNumber]) ? 'bold-text' : 'not-selected'; 
+      }
+
       const desc = move ?
-        `Go to move #` + move + ` in square ${this.state.moveHistory[move - 1]}` :
+        `Go to move #` + move + ` in square ${moveHistory[move]}` :
         `Go to game start`;
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button onClick={() => this.jumpTo(move)} className={isSelected}>{desc}</button>
         </li>
       );
     });
