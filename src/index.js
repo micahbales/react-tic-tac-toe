@@ -10,6 +10,16 @@ function Square(props) {
   );
 }
 
+function Button(props) {
+  return (
+    <div>
+        <button className={props.className} onClick={props.onClick}>
+          Reverse Step Order (Now {props.stepOrderAsc ? 'Asc' : 'Desc'})
+        </button>
+    </div>
+  )
+}
+
 class Board extends React.Component {
 
   renderSquare(i) {
@@ -54,7 +64,8 @@ class Game extends React.Component {
       }],
       xIsNext: true,
       stepNumber: 0,
-      moveHistory: [null]
+      moveHistory: [null],
+      stepOrderAsc: true
     }
   }
 
@@ -90,7 +101,7 @@ class Game extends React.Component {
     const winner = calculateWinner(current.squares);
     const moveHistory = this.state.moveHistory;
 
-    const moves = history.map((step, move) => {
+    let moves = history.map((step, move) => {
 
       // Check whether we are "time traveling"
       let isSelected; 
@@ -113,6 +124,9 @@ class Game extends React.Component {
       );
     });
 
+    // Set step order to descending, if the user has clicked the button
+    if (!this.state.stepOrderAsc) moves = moves.reverse();
+
     let status;
     if (winner) {
       status = 'Winner: ' + winner;
@@ -127,10 +141,23 @@ class Game extends React.Component {
           squares={current.squares}
           onClick={(i) => this.handleClick(i)}
           />
+
+          <div className="game-info">
+            <div>{status}</div>
+            <ol>{moves}</ol>
+          </div>
         </div>
-        <div className="game-info">
-          <div>{status}</div>
-          <ol>{moves}</ol>
+        
+        <div className="controls">
+          <Button
+          className="button"
+          stepOrderAsc={this.state.stepOrderAsc}
+          onClick={() => {
+            this.setState({
+              stepOrderAsc: this.state.stepOrderAsc ? false : true
+            })
+          }}
+          />
         </div>
       </div>
     );
