@@ -137,7 +137,9 @@ class Game extends React.Component {
     if (!this.state.stepOrderAsc) moves = moves.reverse();
 
     let status;
-    if (winner) {
+    if (!winner && this.state.history.length > 9) {
+      status = 'Tie game! Try again.'
+    } else if (winner) {
       status = 'Winner: ' + winner;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
