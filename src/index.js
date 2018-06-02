@@ -78,7 +78,7 @@ class Game extends React.Component {
     const moveHistory = this.state.moveHistory;
 
     // No click action if already winner or space is already filled in
-    if (calculateWinner(squares)[0] || squares[i]) return;
+    if (this.state.winner || squares[i]) return;
 
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
@@ -87,13 +87,14 @@ class Game extends React.Component {
         moveHistory: moveHistory.push(i)
       }]),
       xIsNext: !this.state.xIsNext,
-      stepNumber: history.length
+      stepNumber: history.length,
+      winner: ''
     });
     
     // Once squares have been updated, check to see if there is a winner
-    const winningSquares = calculateWinner(squares)[1];
+    const [winner, winningSquares] = calculateWinner(squares);
     // If so, highlight those squares
-    if (winningSquares) this.setState({winningSquares});
+    if (winningSquares) this.setState({winner, winningSquares});
   }
 
   jumpTo(step) {
@@ -107,7 +108,7 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const moveHistory = this.state.moveHistory;
-    const winner = calculateWinner(current.squares)[0];
+    const winner = this.state.winner;
 
     let moves = history.map((step, move) => {
 
