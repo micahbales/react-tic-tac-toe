@@ -124,7 +124,7 @@ class Game extends React.Component {
       }
 
       const desc = move ?
-        `Go to move #` + move + ` in square ${moveHistory[move]}` :
+        `Go to move #` + move + ` ${generateRowColNums(moveHistory[move])}` :
         `Go to game start`;
       return (
         <li key={move}>
@@ -174,6 +174,14 @@ class Game extends React.Component {
       </div>
     );
   }
+}
+
+function generateRowColNums(num) {
+  return num < 3 ? 
+    `(row 1, col ${num})` : 
+    num < 6 ?
+      `(row 2, col ${num - 3})` :
+      `(row 3, col ${num - 6})`
 }
 
 function calculateWinner(squares) {
